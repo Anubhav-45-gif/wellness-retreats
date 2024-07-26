@@ -7,11 +7,13 @@
    git clone <repository-url>
 
 2. Navigate to the project directory:
-   
-cd wellness-retreats
+      ```bash
+      cd wellness-retreats
 
-4. Install dependencies:
-npm install
+3. Install dependencies:
+    ```bash
+    npm install
 
-5. Start the development server:
-npm start
+4. Start the development server:
+      ```bash
+      npm start
