@@ -13,66 +13,45 @@ const RetreatList = () => {
 
   useEffect(() => {
     const fetchRetreats = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats');
-        const data = await response.json();
-        setRetreats(data);
-        setFilteredRetreats(data);
-      } catch (error) {
-        console.error('Error fetching retreats:', error);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const response = await fetch('https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats');
+      const data = await response.json();
+      setRetreats(data);
+      setFilteredRetreats(data);
+      setLoading(false);
     };
 
     fetchRetreats();
   }, []);
 
   const handleFilter = async (filters) => {
-    try {
-      setLoading(true);
-      if (!filters) {
-        console.error('Filters are not provided');
-        return;
-      }
+    setLoading(true);
+    const response = await fetch('https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats');
+    const data = await response.json();
 
-      const response = await fetch(`https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats?filter=${filters.type || ''}`);
-      const data = await response.json();
-  
-      const filteredByType = data.filter(item => item.type === filters.type || !filters.type);
-      const filterDateTimestamp = filters.date ? new Date(filters.date).getTime() / 1000 : null;
-  
-      const filteredByDate = filteredByType.filter(item => {
-        const itemDateTimestamp = new Date(item.date).getTime() / 1000; 
-        return itemDateTimestamp === filterDateTimestamp || !filters.date;
-      });
-  
-      setFilteredRetreats(filteredByDate);
-      setCurrentPage(1); // Reset to the first page on filter change
-    } catch (error) {
-      console.error('Error filtering retreats:', error);
-    } finally {
-      setLoading(false);
-    }
+    const filteredByType = data.filter(item => {
+      return filters.type ? item.type === filters.type : true;
+    });
+
+    const filteredByDate = filteredByType.filter(item => {
+      if (!filters.date) return true;
+      const itemDate = new Date(item.date * 1000).toISOString().split('T')[0];
+      const filterDate = new Date(filters.date).toISOString().split('T')[0];
+      return itemDate === filterDate;
+    });
+
+    setFilteredRetreats(filteredByDate);
+    setCurrentPage(1); // Reset to the first page on filter change
+    setLoading(false);
   };
 
   const handleSearch = async (searchTerm) => {
-    try {
-      setLoading(true);
-      if (!searchTerm) {
-        setFilteredRetreats(retreats); 
-        return;
-      }
-      const response = await fetch(`https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats?search=${searchTerm}`);
-      const data = await response.json();
-      setFilteredRetreats(data);
-      setCurrentPage(1); 
-    } catch (error) {
-      console.error('Error searching retreats:', error);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    const response = await fetch(`https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats?search=${searchTerm}`);
+    const data = await response.json();
+    setFilteredRetreats(data);
+    setCurrentPage(1); // Reset to the first page on search
+    setLoading(false);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -102,7 +81,7 @@ const RetreatList = () => {
         <div className="flex-1 flex flex-col">
           {filteredRetreats.length === 0 ? (
             <div className="flex justify-center items-center flex-1">
-              <div className="mt-4 h-56 flex justify-center items-center">No events on this date</div>
+              <div className=" mt-4 h-56 flex justify-center items-center">No events on this date</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-4">
