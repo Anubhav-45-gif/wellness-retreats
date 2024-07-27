@@ -3,7 +3,6 @@ import RetreatItem from './RetreatItem';
 import FilterBar from './FilterBar';
 import Pagination from './Pagination';
 import Loader from '../assets/Loader.gif';
-import shoonya from '../assets/shoonya.png';
 
 const RetreatList = () => {
   const [retreats, setRetreats] = useState([]);
